@@ -4720,27 +4720,30 @@ pandas</code></pre>
         document.getElementById('goToLectures')?.addEventListener('click', () => { state.view = 'lectures'; render(); });
     }
 
-  
     function renderQuiz(container) {
-    // Если тест уже пройден — показываем результат
-    if (state.quizSubmitted) {
-        const percent = Math.round((state.quizScore / QUIZ.length) * 100);
-        let grade = '';
-        let gradeColor = '';
-        if (percent >= 90) {
-            grade = 'Отлично';
-            gradeColor = '#2ecc71';
-        } else if (percent >= 70) {
-            grade = 'Хорошо';
-            gradeColor = '#3498db';
-        } else if (percent >= 50) {
-            grade = 'Удовлетворительно';
-            gradeColor = '#f39c12';
-        } else {
-            grade = 'Неудовлетворительно';
-            gradeColor = '#e74c3c';
+        if(!allLecturesViewed() && !state.quizSubmitted) {
+            container.innerHTML = `<div class="container"><div class="card"><h2>Тест доступен после всех лекций</h2><button class="btn" id="backToLectures">К лекциям</button></div></div>`;
+            document.getElementById('backToLectures')?.addEventListener('click', () => { state.view = 'lectures'; render(); });
+            return;
         }
-        container.innerHTML = `
+        if(state.quizSubmitted) {
+            const percent = Math.round((state.quizScore/30)*100);
+            let grade = '';
+            let gradeColor = '';
+            if (percent >= 90) {
+                grade = 'Отлично';
+                gradeColor = '#2ecc71';
+            } else if (percent >= 70) {
+                grade = 'Хорошо';
+                gradeColor = '#3498db';
+            } else if (percent >= 50) {
+                grade = 'Удовлетворительно';
+                gradeColor = '#f39c12';
+            } else {
+                grade = 'Неудовлетворительно';
+                gradeColor = '#e74c3c';
+            }
+            container.innerHTML = `
             <div class="container">
                 <div class="card">
                     <h2>Результат итогового теста</h2>
@@ -4756,83 +4759,42 @@ pandas</code></pre>
                 </div>
             </div>
         `;
-        document.getElementById('retakeQuizBtn')?.addEventListener('click', () => {
-            state.quizSubmitted = false;
-            state.quizAnswers = new Array(QUIZ.length).fill(null);
-            state.quizScore = null;
+            document.getElementById('retakeQuiz')?.addEventListener('click', () => { state.quizSubmitted=false; state.quizAnswers.fill(null); state.quizScore=null; saveProgress(); renderQuiz(container); });
+            document.getElementById('quizToHome')?.addEventListener('click', () => { state.view='landing'; render(); });
+            return;
+        }
+        let html = `<div class="container"><div class="card"><h2>Итоговый тест (30 вопросов)</h2><p>Ответьте на все вопросы.</p>`;
+        QUIZ.forEach((q,idx)=>{
+            const selected = state.quizAnswers[idx];
+            html += `<div class="quiz-question"><strong>${idx+1}. ${q.question}</strong><div>`;
+            q.options.forEach((opt,optIdx)=>{
+                html += `<div class="quiz-option ${selected === optIdx ? 'selected':''}" data-q="${idx}" data-opt="${optIdx}">${String.fromCharCode(65+optIdx)}. ${opt}</div>`;
+            });
+            html += `</div></div>`;
+        });
+        html += `<div class="button-group"><button class="btn" id="submitQuizBtn">Завершить тест</button><button class="btn-secondary" id="cancelQuizBtn">На главную</button></div></div></div>`;
+        container.innerHTML = html;
+        document.querySelectorAll('.quiz-option').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const qIdx = parseInt(el.dataset.q);
+                const optIdx = parseInt(el.dataset.opt);
+                if(state.quizSubmitted) return;
+                state.quizAnswers[qIdx] = optIdx;
+                saveProgress();
+                renderQuiz(container);
+            });
+        });
+        document.getElementById('submitQuizBtn')?.addEventListener('click', () => {
+            let correct = 0;
+            for(let i=0;i<30;i++) if(state.quizAnswers[i] === QUIZ[i].correct) correct++;
+            state.quizScore = correct;
+            state.quizSubmitted = true;
             saveProgress();
             renderQuiz(container);
         });
-        document.getElementById('quizToHomeBtn')?.addEventListener('click', () => {
-            state.view = 'landing';
-            render();
-        });
-        return;
+        document.getElementById('cancelQuizBtn')?.addEventListener('click', () => { state.view='landing'; render(); });
     }
     
-    // Отображение вопросов теста (доступ всегда)
-    let html = `
-        <div class="container">
-            <div class="card">
-                <h2>Итоговый тест (${QUIZ.length} вопросов)</h2>
-                <p>Ответьте на все вопросы. После завершения вы узнаете свою оценку.</p>
-    `;
-    QUIZ.forEach((q, idx) => {
-        const selected = state.quizAnswers[idx];
-        html += `
-            <div class="quiz-question">
-                <strong>${idx + 1}. ${q.question}</strong>
-                <div>
-        `;
-        q.options.forEach((opt, optIdx) => {
-            const isSelected = (selected === optIdx);
-            html += `
-                <div class="quiz-option ${isSelected ? 'selected' : ''}" data-q="${idx}" data-opt="${optIdx}">
-                    ${String.fromCharCode(65 + optIdx)}. ${opt}
-                </div>
-            `;
-        });
-        html += `</div></div>`;
-    });
-    html += `
-                <div class="button-group">
-                    <button class="btn" id="submitQuizFinalBtn">Завершить тест</button>
-                    <button class="btn-secondary" id="cancelQuizHomeBtn">На главную</button>
-                </div>
-            </div>
-        </div>
-    `;
-    container.innerHTML = html;
-    
-    // Обработчики выбора ответов
-    document.querySelectorAll('.quiz-option').forEach(el => {
-        el.addEventListener('click', (e) => {
-            if (state.quizSubmitted) return;
-            const qIdx = parseInt(el.dataset.q);
-            const optIdx = parseInt(el.dataset.opt);
-            state.quizAnswers[qIdx] = optIdx;
-            saveProgress();
-            renderQuiz(container);
-        });
-    });
-    
-    document.getElementById('submitQuizFinalBtn')?.addEventListener('click', () => {
-        if (state.quizSubmitted) return;
-        let correct = 0;
-        for (let i = 0; i < QUIZ.length; i++) {
-            if (state.quizAnswers[i] === QUIZ[i].correct) correct++;
-        }
-        state.quizScore = correct;
-        state.quizSubmitted = true;
-        saveProgress();
-        renderQuiz(container);
-    });
-    
-    document.getElementById('cancelQuizHomeBtn')?.addEventListener('click', () => {
-        state.view = 'landing';
-        render();
-    });
-}
 
     document.querySelectorAll('[data-nav="landing"]').forEach(el => {
         el.addEventListener('click', () => { state.view = 'landing'; render(); });
