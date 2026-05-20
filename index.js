@@ -1324,13 +1324,13 @@ def cached_generate(prompt, temperature, model):
     ];
 
     const LECTURE_SUMMARIES = [
-        "Языковая модель не «понимает» текст как человек: она работает с токенами, векторами, вниманием и вероятностями следующего токена. Поэтому хороший промпт‑инженер управляет не магией, а статистической системой: учитывает контекстное окно, параметры генерации, обучение модели и ограничения архитектуры.",
-        "Промпт — это инженерная управляющая конструкция, где роль, контекст, инструкция, формат и ограничения должны работать вместе. Выбор Zero‑Shot, Few‑Shot, Chain‑of‑Thought или динамического подбора примеров зависит от задачи, а качество результата нужно подтверждать метриками, а не субъективным впечатлением.",
-        "В реальном приложении промпты должны жить как поддерживаемый программный слой: с шаблонами, валидацией входных данных, безопасной параметризацией и обработкой нестабильного вывода. Мета‑промптинг, post‑processing и retry‑стратегии превращают ручной текст запроса в управляемый инженерный процесс.",
-        "RAG добавляет модели внешнюю память и снижает галлюцинации за счёт поиска релевантных фрагментов перед генерацией ответа. Качество такой системы определяется не только моделью, но и чанкингом, эмбеддингами, векторной базой, реранкингом, контролем источников и регулярной оценкой retrieval‑части.",
-        "Агентные системы расширяют LLM от генерации текста до выполнения действий: модель выбирает инструменты, вызывает функции, анализирует результат и может продолжать план. Такой подход полезен для сложных задач, но требует строгих границ, проверки аргументов, логирования и защиты от неконтролируемых цепочек действий.",
-        "Безопасность LLM‑приложений строится не на одной «сильной» системной инструкции, а на архитектуре защиты: фильтрации, изоляции данных, арбитражных проверках, ограничении прав инструментов и контроле персональных данных. Промпт‑инъекции и jailbreak нужно считать обычными угрозами промышленной системы.",
-        "Production‑сервис на базе LLM — это не удачный ноутбук, а измеримая и сопровождаемая система с логированием, мониторингом, кэшированием, очередями, роутингом моделей и версионированием промптов. Главный навык после курса — уметь замыкать цикл: проектировать, измерять, улучшать и безопасно выводить решение в эксплуатацию."
+        "В лекции показано, что языковая модель представляет собой вероятностную систему обработки токенов, эмбеддингов и контекстных зависимостей. Следовательно, эффективное управление её поведением требует понимания архитектурных ограничений, параметров генерации и механизмов обучения, а не опоры на интуитивное восприятие модели как универсального источника знания.",
+        "Лекция формирует системное представление о промпте как о структурированном управляющем сообщении, включающем роль, контекст, инструкцию, формат и ограничения. Рассмотренные стратегии Zero‑Shot, Few‑Shot, Chain‑of‑Thought и динамического подбора примеров демонстрируют, что выбор метода должен определяться характером задачи и подтверждаться измеримыми метриками качества.",
+        "В лекции обоснована необходимость рассматривать промпты как часть программной архитектуры приложения. Использование шаблонов, валидации параметров, мета‑промптинга, post‑processing и retry‑стратегий позволяет повысить воспроизводимость результатов, снизить риски некорректной подстановки данных и обеспечить сопровождаемость LLM‑решений.",
+        "Лекция раскрывает RAG как архитектурный подход к расширению возможностей языковой модели за счёт внешних источников знаний. Качество такой системы определяется согласованной работой этапов чанкинга, векторизации, поиска, реранкинга и генерации, а также регулярной оценкой релевантности retrieved‑контекста и корректности итогового ответа.",
+        "В лекции агентные системы рассматриваются как развитие базового сценария «запрос — ответ», при котором LLM выполняет функции оркестратора внешних инструментов. Практическая ценность данного подхода связана с возможностью планирования и выполнения действий, однако его применение требует строгого контроля аргументов, ограничений доступа, логирования и обработки ошибок.",
+        "Лекция подчёркивает, что безопасность LLM‑приложений должна проектироваться на уровне всей архитектуры, а не ограничиваться формулировкой системного промпта. Противодействие prompt injection, jailbreak и утечкам данных предполагает многоуровневую защиту, включающую фильтрацию, изоляцию, арбитражные проверки, контроль прав инструментов и соблюдение требований к обработке персональных данных.",
+        "Лекция систематизирует требования к переходу от экспериментального прототипа к промышленному LLM‑сервису. Надёжная эксплуатация таких решений предполагает логирование, мониторинг, кэширование, асинхронную обработку, маршрутизацию моделей, версионирование промптов и непрерывную оценку качества, стоимости и устойчивости системы."
     ];
 
     const AUTOCODER_DEFAULT_TASK = "Напиши консольный калькулятор на Python, который принимает выражение в формате «число операция число», поддерживает +, -, *, / и корректно обрабатывает ошибки ввода.";
@@ -4027,37 +4027,108 @@ pandas</code></pre>
 
     // ---------- ТЕСТ (30 ВОПРОСОВ) ----------
     const QUIZ = [
-        { question: "Какой механизм в трансформерах отвечает за взвешивание важности слов?", options: ["Свёртка", "Self-Attention", "Рекуррентные связи", "ReLU"], correct: 1 },
-        { question: "Что такое BPE?", options: ["Байт-парное кодирование", "Обратное распространение", "Двунаправленный кодировщик", "Алгоритм пакетной обработки"], correct: 0 },
-        { question: "Как температура влияет на генерацию?", options: ["Выше → разнообразнее", "Выше → детерминированнее", "Не влияет", "Регулирует длину"], correct: 0 },
-        { question: "Zero-shot промпт — это?", options: ["Без примеров", "С примерами", "С ролью", "С цепочкой рассуждений"], correct: 0 },
-        { question: "Few-shot эффективен, когда:", options: ["Нужно задать формат", "Модель не знает язык", "Ускорить инференс", "Увеличить токены"], correct: 0 },
-        { question: "Мета-промптинг — это:", options: ["Промпт, генерирующий промпты", "Краткий промпт", "Ролевой промпт", "Цепочка рассуждений"], correct: 0 },
-        { question: "Обязательный компонент RAG?", options: ["Векторная БД", "Графовая БД", "Реляционная БД", "Блокчейн"], correct: 0 },
-        { question: "Что такое эмбеддинги?", options: ["Векторные представления текста", "Сжатые модели", "Гиперпараметры", "Промпты"], correct: 0 },
-        { question: "Chain-of-Thought — это:", options: ["Пошаговое рассуждение", "Однослойный перцептрон", "Zero-shot", "Ролевой промпт"], correct: 0 },
-        { question: "Function Calling — это:", options: ["LLM генерирует JSON для API", "Функция активации", "Вызов рекурсии", "Сборка мусора"], correct: 0 },
-        { question: "ReAct объединяет:", options: ["Рассуждение и действие", "Ретрив и генерацию", "Рекурсию и активацию", "Регрессию"], correct: 0 },
-        { question: "Защита от промпт-инъекций:", options: ["Фильтрация ввода", "Увеличение температуры", "Few-shot", "Использование GPT-4"], correct: 0 },
-        { question: "Что такое джейлбрейк?", options: ["Обход ограничений модели", "Ускорение вывода", "Оптимизация", "Сжатие"], correct: 0 },
-        { question: "Библиотека для оценки RAG?", options: ["Ragas", "Scikit-learn", "TensorFlow", "PyTorch"], correct: 0 },
-        { question: "Чанкинг в RAG — это:", options: ["Разбиение документов", "Сжатие эмбеддингов", "Удаление стоп-слов", "Шифрование"], correct: 0 },
-        { question: "Системный промпт задаёт:", options: ["Поведение на сессию", "Ответ", "Токенизацию", "Логирование"], correct: 0 },
-        { question: "Контекстное окно LLM — это:", options: ["Максимум токенов на входе", "Размер скрытого слоя", "Количество слоёв", "Скорость вывода"], correct: 0 },
-        { question: "Техника для внешних инструментов:", options: ["Tool Use", "Fine-tuning", "Prompt chaining", "Self-consistency"], correct: 0 },
-        { question: "Логирование в production нужно для:", options: ["Мониторинга", "Ускорения", "Снижения температуры", "Увеличения контекста"], correct: 0 },
-        { question: "Что такое промпт-инженерия?", options: ["Создание оптимальных запросов", "Программирование нейросетей", "Сбор данных", "Обучение модели"], correct: 0 },
-        { question: "Российские API для курса:", options: ["YandexGPT/GigaChat", "OpenAI", "Anthropic", "Cohere"], correct: 0 },
-        { question: "Метрика ROUGE измеряет:", options: ["Перекрытие n-грамм", "Среднее квадратичное", "Косинусное расстояние", "Время"], correct: 0 },
-        { question: "Автоматический Few-Shot — это:", options: ["Динамический выбор примеров", "Ручной подбор", "Отсутствие примеров", "Случайные примеры"], correct: 0 },
-        { question: "top_p (nucleus sampling) — это:", options: ["Ограничение токенов по вероятности", "Максимальная длина", "Включение внимания", "Шум"], correct: 0 },
-        { question: "Indirect prompt injection — это:", options: ["Вставка в данные для ретривера", "Прямая инъекция", "DoS", "Spoofing"], correct: 0 },
-        { question: "Платформа для финального проекта:", options: ["Streamlit", "React", "Django", "Flask"], correct: 0 },
-        { question: "Векторная БД нужна для:", options: ["Поиска похожих эмбеддингов", "Хранения JSON", "Кэширования", "Логирования"], correct: 0 },
-        { question: "Инференс — это:", options: ["Генерация ответа моделью", "Обучение", "Токенизация", "Квантование"], correct: 0 },
-        { question: "Итоговый мини-проект:", options: ["Веб-приложение генерации кода", "Чат-бот", "Классификатор", "Трансформер"], correct: 0 },
-        { question: "Что такое RAG?", options: ["Retrieval-Augmented Generation", "Рекурсивная сеть", "Агент", "Промпт"], correct: 0 }
+        { type: 'single', question: "Какой механизм в Transformer отвечает за взвешивание важности токенов в контексте?", options: ["Dropout", "Self-Attention", "Свёртка", "Рекуррентная память"], correct: 1 },
+        { type: 'single', question: "Что такое BPE в контексте языковых моделей?", options: ["Метод обратного распространения ошибки", "Алгоритм реранкинга документов", "Байт-парное кодирование для разбиения текста на токены", "Архитектура векторной базы данных"], correct: 2 },
+        { type: 'single', question: "Как повышение temperature обычно влияет на генерацию?", options: ["Сокращает контекстное окно", "Делает ответы более разнообразными и менее детерминированными", "Гарантирует фактическую точность", "Отключает токенизацию"], correct: 1 },
+        { type: 'single', question: "Что означает Zero-Shot промпт?", options: ["Запрос после fine-tuning", "Запрос с несколькими примерами", "Запрос без примеров решения", "Запрос только к векторной базе"], correct: 2 },
+        { type: 'single', question: "Что такое Function Calling в агентных системах?", options: ["Функция активации внутри нейросети", "Сжатие эмбеддингов", "Генерация структурированного вызова внешнего инструмента или API", "Ручная разметка датасета"], correct: 2 },
+        { type: 'single', question: "Для чего используется RAG?", options: ["Чтобы заменить токенизацию", "Чтобы подключить внешние источники знаний к генерации ответа", "Чтобы увеличить температуру", "Чтобы обучить модель с нуля"], correct: 1 },
+        { type: 'single', question: "Что такое контекстное окно LLM?", options: ["Количество обучающих эпох", "Максимальный объём токенов, который модель учитывает за один запрос", "Число пользователей сервиса", "Размер экрана приложения"], correct: 1 },
+        { type: 'single', question: "Что такое jailbreak для LLM?", options: ["Разбиение документов на чанки", "Валидация JSON-ответа", "Попытка обойти ограничения и защитные инструкции модели", "Ускорение инференса"], correct: 2 },
+        { type: 'single', question: "Что регулирует top_p (nucleus sampling)?", options: ["Размер файла логов", "Выбор минимального набора вероятных токенов с суммарной вероятностью не ниже p", "Число retrieved-чанков", "Количество слоёв Transformer"], correct: 1 },
+        { type: 'single', question: "Зачем production LLM-сервису нужно логирование?", options: ["Чтобы отключить кэширование", "Чтобы заменить мониторинг модели", "Чтобы отслеживать качество, стоимость, задержки и ошибки запросов", "Чтобы скрывать системный промпт от разработчика"], correct: 2 },
+
+        { type: 'multiple', question: "Какие элементы входят в инженерно составленный промпт?", options: ["Случайный набор эмодзи", "Инструкция", "Роль", "Ограничения", "Контекст", "Формат ответа"], correct: [1, 2, 3, 4, 5] },
+        { type: 'multiple', question: "Какие этапы относятся к RAG-пайплайну?", options: ["Обучение Transformer с нуля", "Retrieval релевантных чанков", "Индексация документов", "Реранкинг найденных фрагментов", "Генерация ответа с контекстом"], correct: [1, 2, 3, 4] },
+        { type: 'multiple', question: "Какие признаки характерны для агентной LLM-системы?", options: ["Полное отсутствие ограничений на действия", "Анализ результата инструмента", "Выбор внешнего инструмента", "Планирование следующих действий", "Вызов функции с аргументами"], correct: [1, 2, 3, 4] },
+        { type: 'multiple', question: "Какие меры относятся к защите от prompt injection и jailbreak?", options: ["Повышение temperature до максимума", "Изоляция инструментов и данных", "Фильтрация пользовательского ввода", "Ограничение прав внешних функций", "Арбитражная модель"], correct: [1, 2, 3, 4] },
+        { type: 'multiple', question: "Какие практики важны для production-пайплайна LLM-приложения?", options: ["Игнорирование ошибок API", "Кэширование", "Логирование", "Асинхронная обработка и очереди", "Версионирование промптов", "Мониторинг"], correct: [1, 2, 3, 4, 5] },
+        { type: 'multiple', question: "Какие метрики или подходы к оценке качества упоминались в блоке про измерение ответов?", options: ["Цвет фона интерфейса", "BERTScore", "Accuracy", "Exact Match", "ROUGE", "F1"], correct: [1, 2, 3, 4, 5] },
+        { type: 'multiple', question: "Что даёт шаблонизация промптов в приложении?", options: ["Отменяет необходимость обрабатывать ошибки вывода", "Позволяет валидировать параметры", "Упрощает поддержку разных сценариев", "Отделяет текст промпта от логики приложения", "Снижает риск промпт-инъекций при подстановке данных"], correct: [1, 2, 3, 4] },
+        { type: 'multiple', question: "Какие инструменты и модели из российского контура или локального стека упоминались в курсе?", options: ["Блокчейн как обязательная часть RAG", "Qdrant", "YandexGPT", "FAISS", "GigaChat", "rubert-tiny2"], correct: [1, 2, 3, 4, 5] },
+
+        { type: 'text', question: "Как называется подход, который подключает внешнюю память к генерации ответа через поиск релевантных документов?", accepted: ["rag", "retrieval augmented generation", "retrieval-augmented generation", "ретривал аугментед генератион", "ретривал augmented generation"] },
+        { type: 'text', question: "Как называется векторное представление текста или токена?", accepted: ["эмбеддинг", "эмбеддинги", "embedding", "embeddings"] },
+        { type: 'text', question: "Как называется попытка обойти ограничения модели и заставить её нарушить защитные инструкции?", accepted: ["jailbreak", "джейлбрейк", "джейл брейк", "jail break"] },
+        { type: 'text', question: "Как называется паттерн, объединяющий Reasoning и Acting в агентных системах?", accepted: ["react", "re act", "reasoning acting", "reasoning and acting", "reasoning + acting"] },
+
+        { type: 'match', question: "Сопоставьте базовые понятия LLM с их смыслом.", left: ["BPE", "Self-Attention", "Temperature", "RLHF"], right: ["Параметр разнообразия генерации", "Разбиение текста на токены и подслова", "Обучение с подкреплением по обратной связи", "Взвешивание важности токенов в контексте"], correct: [1, 3, 0, 2] },
+        { type: 'match', question: "Сопоставьте компоненты RAG с их ролью.", left: ["Чанкинг", "Эмбеддинги", "Векторная база", "Реранкинг"], right: ["Поиск похожих векторов", "Повторная сортировка найденных чанков", "Разбиение документов на фрагменты", "Преобразование текста в векторы"], correct: [2, 3, 0, 1] },
+        { type: 'match', question: "Сопоставьте production-понятия с назначением.", left: ["Логирование", "Кэширование", "Sandbox", "Model Router"], right: ["Выбор подходящей модели под задачу", "Изоляция выполнения потенциально опасного кода", "Запись запросов, ответов, ошибок и задержек", "Возврат готового ответа для повторяющихся запросов"], correct: [2, 3, 1, 0] },
+
+        { type: 'order', question: "Расположите этапы обработки текста в LLM в правильном порядке.", items: ["Токенизация входного текста", "Преобразование токенов в эмбеддинги", "Обработка контекста слоями Transformer/Self-Attention", "Получение логитов и вероятностей следующего токена", "Выбор следующего токена и продолжение генерации"], initial: [2, 0, 4, 1, 3] },
+        { type: 'order', question: "Расположите этапы RAG-пайплайна в правильном порядке.", items: ["Загрузка документов", "Разбиение документов на чанки", "Векторизация и индексация чанков", "Поиск релевантных фрагментов по запросу", "Генерация ответа с найденным контекстом"], initial: [3, 0, 2, 4, 1] },
+        { type: 'order', question: "Расположите этапы динамического Few-Shot в правильном порядке.", items: ["Собрать базу размеченных примеров", "Посчитать эмбеддинги примеров и запроса", "Выбрать ближайшие по смыслу примеры", "Собрать промпт с выбранными примерами", "Оценить ответ модели метриками"], initial: [1, 3, 0, 4, 2] },
+        { type: 'order', question: "Расположите цикл ReAct-агента в правильном порядке.", items: ["Получить запрос пользователя", "Рассуждением выбрать нужный инструмент", "Вызвать инструмент с аргументами", "Проанализировать результат инструмента", "Сформировать финальный ответ или следующий шаг"], initial: [2, 0, 4, 1, 3] },
+        { type: 'order', question: "Расположите этапы итогового AutoCoder-пайплайна в правильном порядке.", items: ["Получить описание задачи", "Сгенерировать Python-код", "Проверить код и обработать ошибки", "Сформировать ревью кода", "Создать README.md"], initial: [3, 0, 2, 4, 1] }
     ];
+    const QUIZ_VERSION = 3;
+
+    function createEmptyQuizAnswer(question) {
+        if(question.type === 'multiple') return [];
+        if(question.type === 'text') return '';
+        if(question.type === 'match') return {};
+        if(question.type === 'order') return question.initial ? [...question.initial] : question.items.map((_, idx) => idx);
+        return null;
+    }
+
+    function createEmptyQuizAnswers() {
+        return QUIZ.map(createEmptyQuizAnswer);
+    }
+
+    function normalizeQuizAnswer(question, answer) {
+        if(question.type === 'multiple') return Array.isArray(answer) ? answer : [];
+        if(question.type === 'text') return typeof answer === 'string' ? answer : '';
+        if(question.type === 'match') return answer && typeof answer === 'object' && !Array.isArray(answer) ? answer : {};
+        if(question.type === 'order') {
+            const fallback = createEmptyQuizAnswer(question);
+            return Array.isArray(answer) && answer.length === question.items.length ? answer : fallback;
+        }
+        return typeof answer === 'number' ? answer : null;
+    }
+
+    function normalizeQuizAnswers(answers) {
+        if(!Array.isArray(answers) || answers.length !== QUIZ.length) return createEmptyQuizAnswers();
+        return QUIZ.map((question, idx) => normalizeQuizAnswer(question, answers[idx]));
+    }
+
+    function normalizeTextAnswer(value) {
+        return String(value || '')
+            .toLowerCase()
+            .replace(/ё/g, 'е')
+            .replace(/[^a-zа-я0-9+#]+/gi, ' ')
+            .trim()
+            .replace(/\s+/g, ' ');
+    }
+
+    function sameNumberSet(left, right) {
+        if(!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) return false;
+        const leftSorted = [...left].map(Number).sort((a, b) => a - b);
+        const rightSorted = [...right].map(Number).sort((a, b) => a - b);
+        return leftSorted.every((value, idx) => value === rightSorted[idx]);
+    }
+
+    function isQuizAnswerCorrect(question, answer) {
+        if(question.type === 'single') return answer === question.correct;
+        if(question.type === 'multiple') return sameNumberSet(answer, question.correct);
+        if(question.type === 'text') {
+            const normalized = normalizeTextAnswer(answer);
+            return question.accepted.some(item => normalizeTextAnswer(item) === normalized);
+        }
+        if(question.type === 'match') {
+            return question.correct.every((rightIdx, leftIdx) => Number(answer?.[leftIdx]) === rightIdx);
+        }
+        if(question.type === 'order') {
+            return Array.isArray(answer) && answer.every((itemIdx, position) => Number(itemIdx) === position);
+        }
+        return false;
+    }
+
+    function calculateQuizScore() {
+        return QUIZ.reduce((score, question, idx) => {
+            return score + (isQuizAnswerCorrect(question, state.quizAnswers[idx]) ? 1 : 0);
+        }, 0);
+    }
 
     // ---------- СОСТОЯНИЕ ----------
     let state = {
@@ -4065,7 +4136,7 @@ pandas</code></pre>
         currentLectureIdx: 0,
         currentPracticeIdx: 0,
         viewedLectures: new Array(7).fill(false),
-        quizAnswers: new Array(30).fill(null),
+        quizAnswers: createEmptyQuizAnswers(),
         quizSubmitted: false,
         quizScore: null
     };
@@ -4076,9 +4147,10 @@ pandas</code></pre>
             try {
                 const data = JSON.parse(saved);
                 state.viewedLectures = data.viewedLectures || new Array(7).fill(false);
-                state.quizAnswers = data.quizAnswers || new Array(30).fill(null);
-                state.quizSubmitted = data.quizSubmitted || false;
-                state.quizScore = data.quizScore || null;
+                const sameQuizVersion = data.quizVersion === QUIZ_VERSION;
+                state.quizAnswers = sameQuizVersion ? normalizeQuizAnswers(data.quizAnswers) : createEmptyQuizAnswers();
+                state.quizSubmitted = sameQuizVersion ? (data.quizSubmitted || false) : false;
+                state.quizScore = sameQuizVersion && typeof data.quizScore === 'number' ? data.quizScore : null;
                 state.currentLectureIdx = data.currentLectureIdx || 0;
                 state.currentPracticeIdx = data.currentPracticeIdx || 0;
             } catch(e) {}
@@ -4091,6 +4163,7 @@ pandas</code></pre>
             quizAnswers: state.quizAnswers,
             quizSubmitted: state.quizSubmitted,
             quizScore: state.quizScore,
+            quizVersion: QUIZ_VERSION,
             currentLectureIdx: state.currentLectureIdx,
             currentPracticeIdx: state.currentPracticeIdx
         }));
@@ -4099,7 +4172,7 @@ pandas</code></pre>
     function resetProgress() {
         if(confirm("Сбросить весь прогресс?")) {
             state.viewedLectures = new Array(7).fill(false);
-            state.quizAnswers = new Array(30).fill(null);
+            state.quizAnswers = createEmptyQuizAnswers();
             state.quizSubmitted = false;
             state.quizScore = null;
             state.currentLectureIdx = 0;
@@ -4992,6 +5065,134 @@ pandas</code></pre>
         });
     }
 
+    function getQuizTypeLabel(type) {
+        const labels = {
+            single: 'один ответ',
+            multiple: 'несколько ответов',
+            text: 'текстовый ответ',
+            match: 'сопоставление',
+            order: 'порядок'
+        };
+        return labels[type] || type;
+    }
+
+    function renderQuizQuestion(question, idx) {
+        const answer = state.quizAnswers[idx];
+        let body = '';
+
+        if(question.type === 'single' || question.type === 'multiple') {
+            body = `<div class="quiz-options">`;
+            question.options.forEach((option, optIdx) => {
+                const selected = question.type === 'multiple' ? answer.includes(optIdx) : answer === optIdx;
+                const marker = question.type === 'multiple' ? '□' : String.fromCharCode(65 + optIdx);
+                body += `<div class="quiz-option ${selected ? 'selected' : ''}" data-q="${idx}" data-opt="${optIdx}">
+                    <span class="quiz-option-marker">${selected && question.type === 'multiple' ? '✓' : marker}</span>
+                    <span>${escapeHtml(option)}</span>
+                </div>`;
+            });
+            body += `</div>`;
+        } else if(question.type === 'text') {
+            body = `<input class="quiz-text-answer" data-q="${idx}" type="text" value="${escapeHtml(answer)}" placeholder="Введите краткий ответ">`;
+        } else if(question.type === 'match') {
+            body = `<div class="quiz-match-list">`;
+            question.left.forEach((leftItem, leftIdx) => {
+                body += `<div class="quiz-match-row">
+                    <div class="quiz-match-left">${escapeHtml(leftItem)}</div>
+                    <div class="quiz-match-arrow">→</div>
+                    <select class="quiz-match-select" data-q="${idx}" data-left="${leftIdx}">
+                        <option value="">Выберите соответствие</option>
+                        ${question.right.map((rightItem, rightIdx) => `<option value="${rightIdx}" ${Number(answer?.[leftIdx]) === rightIdx ? 'selected' : ''}>${escapeHtml(rightItem)}</option>`).join('')}
+                    </select>
+                </div>`;
+            });
+            body += `</div>`;
+        } else if(question.type === 'order') {
+            const ordered = Array.isArray(answer) ? answer : createEmptyQuizAnswer(question);
+            body = `<ol class="quiz-order-list">`;
+            ordered.forEach((itemIdx, position) => {
+                body += `<li class="quiz-order-item" draggable="true" data-q="${idx}" data-pos="${position}">
+                    <span class="quiz-drag-handle">↕</span>
+                    <span class="quiz-order-number">${position + 1}</span>
+                    <span>${escapeHtml(question.items[itemIdx])}</span>
+                </li>`;
+            });
+            body += `</ol>`;
+        }
+
+        return `<div class="quiz-question quiz-question-${question.type}">
+            <div class="quiz-question-head">
+                <strong>${idx + 1}. ${escapeHtml(question.question)}</strong>
+                <span class="quiz-type-badge">${getQuizTypeLabel(question.type)}</span>
+            </div>
+            ${body}
+        </div>`;
+    }
+
+    function attachQuizHandlers(container) {
+        container.querySelectorAll('.quiz-option').forEach(el => {
+            el.addEventListener('click', () => {
+                const qIdx = parseInt(el.dataset.q);
+                const optIdx = parseInt(el.dataset.opt);
+                const question = QUIZ[qIdx];
+                if(question.type === 'multiple') {
+                    const current = Array.isArray(state.quizAnswers[qIdx]) ? [...state.quizAnswers[qIdx]] : [];
+                    const exists = current.includes(optIdx);
+                    state.quizAnswers[qIdx] = exists ? current.filter(item => item !== optIdx) : [...current, optIdx];
+                } else {
+                    state.quizAnswers[qIdx] = optIdx;
+                }
+                saveProgress();
+                renderQuiz(container);
+            });
+        });
+
+        container.querySelectorAll('.quiz-text-answer').forEach(input => {
+            input.addEventListener('input', () => {
+                const qIdx = parseInt(input.dataset.q);
+                state.quizAnswers[qIdx] = input.value;
+                saveProgress();
+            });
+        });
+
+        container.querySelectorAll('.quiz-match-select').forEach(select => {
+            select.addEventListener('change', () => {
+                const qIdx = parseInt(select.dataset.q);
+                const leftIdx = parseInt(select.dataset.left);
+                const answer = { ...(state.quizAnswers[qIdx] || {}) };
+                if(select.value === '') delete answer[leftIdx];
+                else answer[leftIdx] = Number(select.value);
+                state.quizAnswers[qIdx] = answer;
+                saveProgress();
+            });
+        });
+
+        let dragged = null;
+        container.querySelectorAll('.quiz-order-item').forEach(item => {
+            item.addEventListener('dragstart', (event) => {
+                dragged = { qIdx: parseInt(item.dataset.q), pos: parseInt(item.dataset.pos) };
+                event.dataTransfer.setData('text/plain', `${dragged.qIdx}:${dragged.pos}`);
+            });
+            item.addEventListener('dragover', (event) => {
+                event.preventDefault();
+            });
+            item.addEventListener('drop', (event) => {
+                event.preventDefault();
+                const target = { qIdx: parseInt(item.dataset.q), pos: parseInt(item.dataset.pos) };
+                const source = dragged || (() => {
+                    const [qIdx, pos] = event.dataTransfer.getData('text/plain').split(':').map(Number);
+                    return { qIdx, pos };
+                })();
+                if(source.qIdx !== target.qIdx || source.pos === target.pos) return;
+                const current = [...state.quizAnswers[source.qIdx]];
+                const [moved] = current.splice(source.pos, 1);
+                current.splice(target.pos, 0, moved);
+                state.quizAnswers[source.qIdx] = current;
+                saveProgress();
+                renderQuiz(container);
+            });
+        });
+    }
+
     function renderQuiz(container) {
         if(!allLecturesViewed() && !state.quizSubmitted) {
             container.innerHTML = `<div class="container"><div class="card"><h2>Тест доступен после всех лекций</h2><button class="btn" id="backToLectures">К лекциям</button></div></div>`;
@@ -4999,7 +5200,7 @@ pandas</code></pre>
             return;
         }
         if(state.quizSubmitted) {
-            const percent = Math.round((state.quizScore/30)*100);
+            const percent = Math.round((state.quizScore/QUIZ.length)*100);
             let grade = '';
             let gradeColor = '';
             if (percent >= 90) {
@@ -5026,40 +5227,24 @@ pandas</code></pre>
                     </div>
                     <div class="button-group">
                         <button class="btn" id="retakeQuizBtn">Пройти заново</button>
-                        <button class="btn-secondary" id="quizToHomeBtn">На главную</button>
+                        <button class="btn-secondary btn" id="quizToHomeBtn">На главную</button>
                     </div>
                 </div>
             </div>
         `;
-            document.getElementById('retakeQuiz')?.addEventListener('click', () => { state.quizSubmitted=false; state.quizAnswers.fill(null); state.quizScore=null; saveProgress(); renderQuiz(container); });
-            document.getElementById('quizToHome')?.addEventListener('click', () => { state.view='landing'; render(); });
+            document.getElementById('retakeQuizBtn')?.addEventListener('click', () => { state.quizSubmitted=false; state.quizAnswers=createEmptyQuizAnswers(); state.quizScore=null; saveProgress(); renderQuiz(container); });
+            document.getElementById('quizToHomeBtn')?.addEventListener('click', () => { state.view='landing'; render(); });
             return;
         }
-        let html = `<div class="container"><div class="card"><h2>Итоговый тест (30 вопросов)</h2><p>Ответьте на все вопросы.</p>`;
+        let html = `<div class="container"><div class="card"><h2>Итоговый тест (30 вопросов)</h2><p>Формат: 10 single, 8 multiple, 4 text, 3 match и 5 order. В multiple засчитывается только полный набор правильных вариантов, в order перетащите пункты в нужную последовательность.</p>`;
         QUIZ.forEach((q,idx)=>{
-            const selected = state.quizAnswers[idx];
-            html += `<div class="quiz-question"><strong>${idx+1}. ${q.question}</strong><div>`;
-            q.options.forEach((opt,optIdx)=>{
-                html += `<div class="quiz-option ${selected === optIdx ? 'selected':''}" data-q="${idx}" data-opt="${optIdx}">${String.fromCharCode(65+optIdx)}. ${opt}</div>`;
-            });
-            html += `</div></div>`;
+            html += renderQuizQuestion(q, idx);
         });
-        html += `<div class="button-group"><button class="btn" id="submitQuizBtn">Завершить тест</button><button class="btn-secondary" id="cancelQuizBtn">На главную</button></div></div></div>`;
+        html += `<div class="button-group"><button class="btn" id="submitQuizBtn">Завершить тест</button><button class="btn-secondary btn" id="cancelQuizBtn">На главную</button></div></div></div>`;
         container.innerHTML = html;
-        document.querySelectorAll('.quiz-option').forEach(el => {
-            el.addEventListener('click', (e) => {
-                const qIdx = parseInt(el.dataset.q);
-                const optIdx = parseInt(el.dataset.opt);
-                if(state.quizSubmitted) return;
-                state.quizAnswers[qIdx] = optIdx;
-                saveProgress();
-                renderQuiz(container);
-            });
-        });
+        attachQuizHandlers(container);
         document.getElementById('submitQuizBtn')?.addEventListener('click', () => {
-            let correct = 0;
-            for(let i=0;i<30;i++) if(state.quizAnswers[i] === QUIZ[i].correct) correct++;
-            state.quizScore = correct;
+            state.quizScore = calculateQuizScore();
             state.quizSubmitted = true;
             saveProgress();
             renderQuiz(container);
